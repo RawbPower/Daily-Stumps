@@ -1,26 +1,12 @@
 const random = require('../utils/random');
 const polyomino = require("../utils/polyomino");
+const Grid = require("../utils/grid").Grid;
 
-let shapeGrid = [0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0 ];
+let shapeGrid = new Grid(6, 6);
 
-let numberGrid = [0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0 ];
+let numberGrid = new Grid(6, 6);
 
-let initialGrid = [0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0, 
-            0, 0, 0, 0, 0, 0 ];
+let initialGrid = new Grid(6, 6);
 
 const rowHints = [0, 0, 0, 0, 0, 0];
 const colHints = [0, 0, 0, 0, 0, 0];
@@ -91,16 +77,14 @@ function getSumominoString(shape, width)
 
 function placeSumomino(sumomino, x, y, width, height)
 {
-    const gridDimension = Math.sqrt(shapeGrid.length);
-
-    for (let i = 0; i < width; i++) 
+    for (let j = 0; j < height; j++) 
     {
-        for (let j = 0; j < height; j++) 
+        for (let i = 0; i < width; i++) 
         {
             let num = sumomino[i + j * width];
-            if (sumomino[i + j * width] > 0)
+            if (num > 0)
             {
-                shapeGrid[(i+x) + (j+y) * gridDimension] = sumomino[i + j * width];
+                shapeGrid.set(num, j+y, i+x);
             }
         }
     }
@@ -108,13 +92,11 @@ function placeSumomino(sumomino, x, y, width, height)
 
 function checkForOverlap(sumomino, x, y, width, height)
 {
-    const gridDimension = Math.sqrt(shapeGrid.length);
-
-    for (let i = 0; i < width; i++) 
+    for (let j = 0; j < height; j++) 
     {
-        for (let j = 0; j < height; j++) 
+        for (let i = 0; i < width; i++) 
         {
-            if (sumomino[i + j * width] > 0 && shapeGrid[(i+x) + (j+y) * gridDimension] > 0)
+            if (sumomino[i + j * width] > 0 && shapeGrid.get(j+y, i+x) > 0)
             {
                 return true;
             }
@@ -126,8 +108,8 @@ function checkForOverlap(sumomino, x, y, width, height)
 
 function getCenterOffset(sumominoLength)
 {
-    let offsetX = Math.sqrt(shapeGrid.length) / 2 - (Math.sqrt(sumominoLength) / 2);
-    let offsetY = offsetX;
+    let offsetX = shapeGrid.cols / 2 - (Math.sqrt(sumominoLength) / 2);
+    let offsetY = shapeGrid.rows / 2 - (Math.sqrt(sumominoLength) / 2);
     if (offsetX % 1 != 0)
     {
         offsetX = random.rand() >= 0.5 ? Math.floor(offsetX) : Math.ceil(offsetX);
@@ -137,76 +119,10 @@ function getCenterOffset(sumominoLength)
     return {x: offsetX, y: offsetY};
 }
 
-function trim(sumomino, width, height)
-{
-    const dimension = Math.sqrt(sumomino.length);
-
-    let trimRows = [];
-    let trimCols = [];
-    for (let i = 0; i < dimension; i++) 
-    {
-        let rowSum = 0;
-        for (let j = 0; j < dimension; j++) 
-        {
-            rowSum += sumomino[j + i * dimension];
-        }
-        if (rowSum == 0)
-        {
-            trimRows.push(i);
-        }
-    }
-
-    for (let j = 0; j < dimension; j++) 
-    {
-        let colSum = 0;
-        for (let i = 0; i < dimension; i++) 
-        {
-            colSum += sumomino[j + i * dimension];
-        }
-        if (colSum == 0)
-        {
-            trimCols.push(j);
-        }
-    }
-
-    console.log(trimRows);
-    console.log(trimCols);
-
-    let res = [];
-    for (let i = 0; i < dimension; i++) 
-    {
-        if (trimRows.includes(i))
-        {
-            continue;
-        }
-
-        for (let j = 0; j < dimension; j++) 
-        {
-            if (trimCols.includes(j))
-            {
-                continue;
-            }
-
-            res.push(sumomino[j + i * dimension])
-        }
-    }
-
-    width -= trimCols.length;
-    height -= trimRows.length;
-
-    return {
-        value: res,
-        width: width, 
-        height: height
-    }
-}
-
 function tryPlaceSumominoes(sumominoes)
 {
     for (let i = 0; i < sumominoes.length; i++)
     {
-        offset = getCenterOffset(sumominoes[i].length);
-
         let trimmedSumomino = {
             value: sumominoes[i].slice(""),
             width: Math.sqrt(sumominoes[i].length), 
@@ -215,7 +131,7 @@ function tryPlaceSumominoes(sumominoes)
 
         getSumominoString(sumominoes[i], Math.sqrt(sumominoes[i].length));
 
-        trimmedSumomino = trim(sumominoes[i], Math.sqrt(sumominoes[i].length), Math.sqrt(sumominoes[i].length));
+        trimmedSumomino = polyomino.trim(sumominoes[i], Math.sqrt(sumominoes[i].length), Math.sqrt(sumominoes[i].length));
 
         getSumominoString(trimmedSumomino.value, trimmedSumomino.width);
 
@@ -225,10 +141,12 @@ function tryPlaceSumominoes(sumominoes)
 
         getSumominoString(trimmedSumomino.value, trimmedSumomino.width);
 
+        let offset = getCenterOffset(trimmedSumomino.value.length);
+
         if (i > 0)
         {
-            const offsetLimitX = Math.sqrt(shapeGrid.length) - trimmedSumomino.width;
-            const offsetLimitY = Math.sqrt(shapeGrid.length) - trimmedSumomino.height;
+            const offsetLimitX = shapeGrid.cols - trimmedSumomino.width;
+            const offsetLimitY = shapeGrid.rows - trimmedSumomino.height;
             let isOverlapping = true;
             let count = 0;
             while (isOverlapping && count < 100)
@@ -248,7 +166,7 @@ function tryPlaceSumominoes(sumominoes)
 
         placeSumomino(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
 
-        getSumominoString(shapeGrid, Math.sqrt(shapeGrid.length));
+        shapeGrid.log();
     }
 
     return true;
@@ -275,12 +193,7 @@ function generateDailyPuzzle()
     let attempts = 0;
     while (!hasValidGrid && attempts < 100)
     {
-        shapeGrid = [0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0 ];
+        shapeGrid = new Grid(6, 6);
 
         attempts++;
         hasValidGrid = tryPlaceSumominoes(sumominoes);
@@ -291,34 +204,34 @@ function generateDailyPuzzle()
         console.error("Error! No valid puzzle found.");
     }
 
-    numberGrid = shapeGrid.slice("");
+    numberGrid.set(shapeGrid.get().slice(""));
 
-    for (let i = 0; i < shapeGrid.length; i++)
+    for (let i = 0; i < shapeGrid.length(); i++)
     {
-        if (shapeGrid[i] > 0)
+        if (shapeGrid.get(i) > 0)
         {
-            numberGrid[i] = numberOrders[shapeGrid[i]-1][currentIndex[shapeGrid[i]-1]];
-            initialGrid[i] = shownIndex[shapeGrid[i]-1] == currentIndex[shapeGrid[i]-1] ? numberGrid[i] : -1;
-            currentIndex[shapeGrid[i]-1]++;
+            numberGrid.set(numberOrders[shapeGrid.get(i)-1][currentIndex[shapeGrid.get(i)-1]], i);
+            let x = shownIndex[shapeGrid.get(i)-1] == currentIndex[shapeGrid.get(i)-1] ? numberGrid.get(i) : -1;
+            initialGrid.set(x, i);
+            currentIndex[shapeGrid.get(i)-1]++;
         }
         else
         {
-            numberGrid[i] = 0;
-            initialGrid[i] = 0;
+            numberGrid.set(0, i);
+            initialGrid.set(0, 1);
         }
     }
 
-    getSumominoString(numberGrid, Math.sqrt(numberGrid.length));
-    getSumominoString(initialGrid, Math.sqrt(initialGrid.length));
+    numberGrid.log();
+    initialGrid.log();
 
-    const gridDimension = Math.sqrt(shapeGrid.length);
-    for (let i = 0; i < gridDimension; i++) 
+    for (let i = 0; i < numberGrid.rows; i++) 
     {
-        for (let j = 0; j < gridDimension; j++) 
+        for (let j = 0; j < numberGrid.cols; j++) 
         {
-            if (numberGrid[j + i * gridDimension] > 0)
+            if (numberGrid.get(i, j) > 0)
             {
-                const cellCount = numberGrid[j + i * gridDimension];
+                const cellCount = numberGrid.get(i, j);
                 colHints[j] += cellCount;
                 rowHints[i] += cellCount;
             }
@@ -337,9 +250,9 @@ function startGame(dailySeedPrefix)
 	console.log("Done");
 
 	return {
-		initialSumominoes: initialGrid,
-		sumominoShapes: shapeGrid,
-        solutionSumominoes: numberGrid,
+		initialSumominoes: initialGrid.get(),
+		sumominoShapes: shapeGrid.get(),
+        solutionSumominoes: numberGrid.get(),
         colHints: colHints,
 		rowHints: rowHints
 	}
