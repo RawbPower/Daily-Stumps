@@ -42,6 +42,37 @@ Grid.prototype.length = function()
     return this.value.length;
 }
 
+Grid.prototype.placePolyomino = function(polyomino, x, y, width, height)
+{
+    for (let j = 0; j < height; j++) 
+    {
+        for (let i = 0; i < width; i++) 
+        {
+            let num = polyomino[i + j * width];
+            if (num > 0)
+            {
+                this.set(num, j+y, i+x);
+            }
+        }
+    }
+}
+
+Grid.prototype.checkForOverlap = function(polyomino, x, y, width, height)
+{
+    for (let j = 0; j < height; j++) 
+    {
+        for (let i = 0; i < width; i++) 
+        {
+            if (polyomino[i + j * width] > 0 && this.get(j+y, i+x) > 0)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 Grid.prototype.log = function()
 {
     let gridString = "";

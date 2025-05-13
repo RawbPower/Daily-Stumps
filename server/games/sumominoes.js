@@ -49,17 +49,6 @@ function shuffle(array)
     return array;
 }
 
-function replaceShapeNumber(shape, number)
-{
-    for (let i = 0; i < shape.length; i++)
-    {
-        if (shape[i] > 0)
-        {
-            shape[i] = number;
-        }
-    }
-}
-
 function getSumominoString(shape, width)
 {
     let sumominoString = "";
@@ -73,37 +62,6 @@ function getSumominoString(shape, width)
     }
 
     console.log(sumominoString);
-}
-
-function placeSumomino(sumomino, x, y, width, height)
-{
-    for (let j = 0; j < height; j++) 
-    {
-        for (let i = 0; i < width; i++) 
-        {
-            let num = sumomino[i + j * width];
-            if (num > 0)
-            {
-                shapeGrid.set(num, j+y, i+x);
-            }
-        }
-    }
-}
-
-function checkForOverlap(sumomino, x, y, width, height)
-{
-    for (let j = 0; j < height; j++) 
-    {
-        for (let i = 0; i < width; i++) 
-        {
-            if (sumomino[i + j * width] > 0 && shapeGrid.get(j+y, i+x) > 0)
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
 }
 
 function getCenterOffset(sumominoLength)
@@ -123,15 +81,9 @@ function tryPlaceSumominoes(sumominoes)
 {
     for (let i = 0; i < sumominoes.length; i++)
     {
-        let trimmedSumomino = {
-            value: sumominoes[i].slice(""),
-            width: Math.sqrt(sumominoes[i].length), 
-            height: Math.sqrt(sumominoes[i].length)
-        }
-
         getSumominoString(sumominoes[i], Math.sqrt(sumominoes[i].length));
 
-        trimmedSumomino = polyomino.trim(sumominoes[i], Math.sqrt(sumominoes[i].length), Math.sqrt(sumominoes[i].length));
+        trimmedSumomino = polyomino.trim(sumominoes[i].slice(""), Math.sqrt(sumominoes[i].length), Math.sqrt(sumominoes[i].length));
 
         getSumominoString(trimmedSumomino.value, trimmedSumomino.width);
 
@@ -145,6 +97,7 @@ function tryPlaceSumominoes(sumominoes)
 
         if (i > 0)
         {
+            // Need to check for sumominoes overflowing off side of grid (maybe)
             const offsetLimitX = shapeGrid.cols - trimmedSumomino.width;
             const offsetLimitY = shapeGrid.rows - trimmedSumomino.height;
             let isOverlapping = true;
@@ -153,7 +106,7 @@ function tryPlaceSumominoes(sumominoes)
             {
                 offset.x = random.range(0, offsetLimitX+1);
                 offset.y = random.range(0, offsetLimitY+1);
-                isOverlapping = checkForOverlap(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
+                isOverlapping = shapeGrid.checkForOverlap(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
                 count++;
             }
 
@@ -164,7 +117,7 @@ function tryPlaceSumominoes(sumominoes)
             }
         }
 
-        placeSumomino(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
+        shapeGrid.placePolyomino(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
 
         shapeGrid.log();
     }
@@ -184,7 +137,7 @@ function generateDailyPuzzle()
 
     for (let i = 0; i < sumominoes.length; i++)
     {
-        replaceShapeNumber(sumominoes[i], i+1);
+        polyomino.replacePolyominoNumber(sumominoes[i], i+1);
     }
 
     shuffle(sumominoes);
@@ -262,3 +215,5 @@ function startGame(dailySeedPrefix)
 module.exports = {
 	startGame
 }
+
+startGame();

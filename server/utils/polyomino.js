@@ -121,11 +121,23 @@ function trim(sumomino, width, height)
     }
 }
 
+function replacePolyominoNumber(polyomino, number)
+{
+    for (let i = 0; i < polyomino.length; i++)
+    {
+        if (polyomino[i] > 0)
+        {
+            polyomino[i] = number;
+        }
+    }
+}
+
 module.exports = {
 	getShape,
     getSizeCount,
     transpose,
     rotate,
     getOrientation,
-    trim
+    trim,
+    replacePolyominoNumber
 }
