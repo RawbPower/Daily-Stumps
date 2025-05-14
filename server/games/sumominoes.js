@@ -215,5 +215,3 @@ function startGame(dailySeedPrefix)
 module.exports = {
 	startGame
 }
-
-startGame();

@@ -6,6 +6,7 @@ const dimension = 5;
 const verticalLineCount = dimension * (dimension - 1);
 const horizontalLineCount = dimension * (dimension - 1);
 let grid = new Grid(5, 5);
+let neighbourGrid = new Grid(5, 5);
 let lineSolution = new Array(verticalLineCount + horizontalLineCount).fill(false);
 
 function calculateDivisions()
@@ -37,6 +38,7 @@ function getRandomShape(minSize, maxSize)
 
 function areDivisionValid(divisions)
 {
+    // This needs to account for separated groups of 0
     for (let [key, value] of  divisions.entries()) 
     {
         if (value > 5)
@@ -46,6 +48,44 @@ function areDivisionValid(divisions)
     }
 
     return true;
+}
+
+function getNeighbours(index)
+{
+    let neighbours = new Array(4);
+    neighbours[0] = (index % grid.cols != 4) ? grid.get(index+1) : -1;                  // Right
+    neighbours[1] = (index % grid.cols != 0) ? grid.get(index-1) : -1;                  // Left
+    neighbours[2] = (index > grid.cols - 1) ? grid.get(index-grid.cols) : -1;               // Above
+    neighbours[3] = (index < grid.length() - grid.cols) ? grid.get(index+5) : -1;     // Bottom
+    return neighbours;
+}
+
+function getNeighbourCount(index)
+{
+    const neighbours = getNeighbours(index);
+
+    let currentUniqueNeighbours = [];
+    for (const n of neighbours)
+    {
+        if (n < 0)
+        {
+            continue;
+        }
+
+        if (n == grid.get(index))
+        {
+            continue;
+        }
+
+        if (currentUniqueNeighbours.includes(n))
+        {
+            continue;
+        }
+
+        currentUniqueNeighbours.push(n);
+    }
+
+    return currentUniqueNeighbours.length;
 }
 
 function generateDailyPuzzle()
@@ -61,7 +101,7 @@ function generateDailyPuzzle()
 
         let isOverlapping = true;
         let attempts = 0;
-        while (isOverlapping && attempts < 100)
+        while (isOverlapping && attempts < 30)
         {
             const newPolyomino = getRandomShape(1, 5);
             polyomino.replacePolyominoNumber(newPolyomino.shape, count);
@@ -78,9 +118,10 @@ function generateDailyPuzzle()
             attempts++;
         }
 
-        if (attempts >= 1000)
+        if (attempts >= 30)
         {
-            console.log("Error");
+            console.log("Early Out");
+            break;
         }
 
         grid.placePolyomino(trimmedPolyomino.value, randomX, randomY, trimmedPolyomino.width, trimmedPolyomino.height);
@@ -92,6 +133,71 @@ function generateDailyPuzzle()
 
     console.log(divisions);
     grid.log();
+
+    let currentNumber = count;
+
+    // Fill in zero with unique numbers
+    for (let i = 0; i < grid.length(); i++)
+    {
+        if (grid.get(i) == 0)
+        {
+            const neighbours = getNeighbours(i);
+            let foundValidNeighbour = false;
+            for (const n of neighbours)
+            {
+                if (n >= count)
+                {
+                    grid.set(n, i);
+                    foundValidNeighbour = true;
+                    break;
+                }
+            }
+
+            if (!foundValidNeighbour)
+            {
+                grid.set(currentNumber, i);
+                currentNumber++;
+            }
+        }
+    }
+
+    grid.log();
+
+    let rightNeighbourCount = 0;
+    let bottomNeighbourCount = 0;
+    for (let i = 0; i < grid.length(); i++)
+    {
+        neighbourGrid.set(getNeighbourCount(i), i);
+
+        // Check neighbours for lines
+        const neighbours = getNeighbours(i);
+
+        // Check right
+        const rightNeighbour = neighbours[0];
+        if (rightNeighbour > 0)
+        {
+            if (rightNeighbour != grid.get(i))
+            {
+                lineSolution[rightNeighbourCount] = true;
+            }
+            rightNeighbourCount++;
+        }
+
+        // Check bottom
+        const bottomNeighbour = neighbours[3];
+        if (bottomNeighbour > 0)
+        {
+            if (bottomNeighbour != grid.get(i))
+            {
+                lineSolution[verticalLineCount + bottomNeighbourCount] = true;
+            }
+            bottomNeighbourCount++;
+        }
+    }
+
+    console.log(lineSolution);
+
+    neighbourGrid.log();
 }
 
 function startGame(dailySeedPrefix)
@@ -102,7 +208,7 @@ function startGame(dailySeedPrefix)
     console.log("Done");
 
     return {
-        numberGrid: grid.value,
+        numberGrid: neighbourGrid.value,
         lineGridSolution: lineSolution
     };
       
@@ -111,5 +217,3 @@ function startGame(dailySeedPrefix)
 module.exports = {
     startGame
 }
-
-startGame();

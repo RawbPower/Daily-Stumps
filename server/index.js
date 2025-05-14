@@ -128,6 +128,7 @@ DailyPuzzleData.Tonari = {
 const dailySeed = "07052025";
 DailyPuzzleData.SummingCircle = summingCircle.startGame(dailySeed);
 DailyPuzzleData.Sumominoes = sumominoes.startGame(dailySeed);
+DailyPuzzleData.Tonari = tonari.startGame(dailySeed);
 
 app.get("/api", (req, res) => {
     res.json({ puzzleData: DailyPuzzleData });
