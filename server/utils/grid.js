@@ -42,6 +42,14 @@ Grid.prototype.length = function()
     return this.value.length;
 }
 
+Grid.prototype.fill = function(x)
+{
+    for (let i = 0; i < this.value.length; i++) 
+    {
+        this.value[i] = x;
+    }
+}
+
 Grid.prototype.placePolyomino = function(polyomino, x, y, width, height)
 {
     for (let j = 0; j < height; j++) 

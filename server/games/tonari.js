@@ -31,8 +31,8 @@ function calculateDivisions()
 
 function getRandomShape(minSize, maxSize)
 {
-    const randomSizeIndex = random.range(minSize - 1, maxSize);
-    const randomShapeIndex = random.range(0, polyomino.getSizeCount(randomSizeIndex));
+    const randomSizeIndex = random.rangeInt(minSize - 1, maxSize);
+    const randomShapeIndex = random.rangeInt(0, polyomino.getSizeCount(randomSizeIndex));
     return polyomino.getShape(randomSizeIndex, randomShapeIndex);
 }
 
@@ -107,12 +107,12 @@ function generateDailyPuzzle()
             polyomino.replacePolyominoNumber(newPolyomino.shape, count);
     
             trimmedPolyomino = polyomino.trim(newPolyomino.shape, newPolyomino.size, newPolyomino.size);
-            const transpositions = random.range(0, 2);
-            const rotations = random.range(0, 4);
+            const transpositions = random.rangeInt(0, 2);
+            const rotations = random.rangeInt(0, 4);
             trimmedPolyomino = polyomino.getOrientation(trimmedPolyomino, transpositions, rotations);
 
-            randomX = random.range(0, grid.cols - trimmedPolyomino.width + 1);
-            randomY = random.range(0, grid.rows - trimmedPolyomino.height + 1);
+            randomX = random.rangeInt(0, grid.cols - trimmedPolyomino.width + 1);
+            randomY = random.rangeInt(0, grid.rows - trimmedPolyomino.height + 1);
 
             isOverlapping = grid.checkForOverlap(trimmedPolyomino.value, randomX, randomY, trimmedPolyomino.width, trimmedPolyomino.height);
             attempts++;

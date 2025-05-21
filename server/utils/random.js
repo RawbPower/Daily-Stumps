@@ -11,7 +11,7 @@ function rand()
     return rng();
 }
 
-function range(min, max)
+function rangeInt(min, max)
 {
     return Math.floor(rng() * (max - min) + min);
 }
@@ -19,5 +19,5 @@ function range(min, max)
 module.exports = {
 	initSeed,
     rand,
-    range
+    rangeInt
 }

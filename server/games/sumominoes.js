@@ -13,8 +13,8 @@ const colHints = [0, 0, 0, 0, 0, 0];
 
 function getRandomShape(minSize, maxSize)
 {
-    const randomSizeIndex = random.range(minSize - 1, maxSize);
-    const randomShapeIndex = random.range(0, polyomino.getSizeCount(randomSizeIndex));
+    const randomSizeIndex = random.rangeInt(minSize - 1, maxSize);
+    const randomShapeIndex = random.rangeInt(0, polyomino.getSizeCount(randomSizeIndex));
     return polyomino.getShape(randomSizeIndex, randomShapeIndex);
 }
 
@@ -38,7 +38,7 @@ function shuffle(array)
     {
   
       // Pick a remaining element...
-      let randomIndex = random.range(0, currentIndex);
+      let randomIndex = random.rangeInt(0, currentIndex);
       currentIndex--;
   
       // And swap it with the current element.
@@ -87,8 +87,8 @@ function tryPlaceSumominoes(sumominoes)
 
         getSumominoString(trimmedSumomino.value, trimmedSumomino.width);
 
-        const transpositions = random.range(0, 2);
-        const rotations = random.range(0, 4);
+        const transpositions = random.rangeInt(0, 2);
+        const rotations = random.rangeInt(0, 4);
         trimmedSumomino = polyomino.getOrientation(trimmedSumomino, transpositions, rotations);
 
         getSumominoString(trimmedSumomino.value, trimmedSumomino.width);
@@ -104,8 +104,8 @@ function tryPlaceSumominoes(sumominoes)
             let count = 0;
             while (isOverlapping && count < 100)
             {
-                offset.x = random.range(0, offsetLimitX+1);
-                offset.y = random.range(0, offsetLimitY+1);
+                offset.x = random.rangeInt(0, offsetLimitX+1);
+                offset.y = random.rangeInt(0, offsetLimitY+1);
                 isOverlapping = shapeGrid.checkForOverlap(trimmedSumomino.value, offset.x, offset.y, trimmedSumomino.width, trimmedSumomino.height);
                 count++;
             }
@@ -133,7 +133,7 @@ function generateDailyPuzzle()
     const sumominoes = [shapesAndSizes[0].shape, shapesAndSizes[1].shape, shapesAndSizes[2].shape, shapesAndSizes[3].shape, shapesAndSizes[4].shape];
     const numberOrders = [shuffle(range(1,shapesAndSizes[0].size)), shuffle(range(1,shapesAndSizes[1].size)), shuffle(range(1,shapesAndSizes[2].size)), shuffle(range(1,shapesAndSizes[3].size)), shuffle(range(1,shapesAndSizes[4].size))];
     let currentIndex = new Array(numberOrders.length).fill(0);
-    let shownIndex = [random.range(0, shapesAndSizes[0].size), random.range(0, shapesAndSizes[1].size), random.range(0, shapesAndSizes[2].size), random.range(0, shapesAndSizes[3].size), random.range(0, shapesAndSizes[4].size)]
+    let shownIndex = [random.rangeInt(0, shapesAndSizes[0].size), random.rangeInt(0, shapesAndSizes[1].size), random.rangeInt(0, shapesAndSizes[2].size), random.rangeInt(0, shapesAndSizes[3].size), random.rangeInt(0, shapesAndSizes[4].size)]
 
     for (let i = 0; i < sumominoes.length; i++)
     {
