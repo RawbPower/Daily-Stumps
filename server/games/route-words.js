@@ -1,8 +1,10 @@
 const random = require('../utils/random');
+const words = require("../data/valid_words");
 const Grid = require("../utils/grid").Grid;
 
 let routeGrid = new Grid(5, 5);
-
+let wordGrid = new Grid(5, 5);
+let wordList = [];
 function isValidDirection(index, direction)
 {
     if (direction == 0)
@@ -164,6 +166,7 @@ function generateDailyPuzzle()
 
     let currentIndex = startingIndex
     const wordSizes = [7, 6, 6, 5, 5];
+    const wordRoutes = [[startingIndex], [startingIndex], [startingIndex], [startingIndex], [startingIndex]]
 
     for (let i = 0; i < wordSizes.length; i++)
     {
@@ -200,6 +203,7 @@ function generateDailyPuzzle()
 
                 routeGrid.log();
                 currentIndex = neighbourIndex;
+                wordRoutes[i].push(currentIndex);
 
                 if (deadEndCount == 1 && letter+1 == letterCount)
                 {
@@ -213,6 +217,38 @@ function generateDailyPuzzle()
         currentIndex = startingIndex;
     }
 
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+    const randomLetterIndex = random.rangeInt(0, 26);
+    const randomLetter = letters.charAt(randomLetterIndex).toUpperCase();
+
+    for (let i = 0; i < wordSizes.length; i++)
+    {
+        let letterCount = wordSizes[i];
+        let validWord = false;
+        while (!validWord)
+        {
+            const randomWord = words[random.rangeInt(0, words.length)];
+            
+            const firstLetter = randomWord.charAt(0).toUpperCase();
+            if (randomWord.length == letterCount && firstLetter == randomLetter)
+            {
+                wordList.push(randomWord.toUpperCase());
+                validWord = true;
+            }
+        }
+    }
+
+    wordGrid.set(randomLetter,startingIndex);
+    for (let i = 0; i < wordRoutes.length; i++)
+    {
+        for (let j = 1; j < wordRoutes[i].length; j++)
+        {
+            const routeIndex = wordRoutes[i][j];
+            const routeChar = wordList[i].charAt(j);
+            wordGrid.set(routeChar, routeIndex);
+        }
+    }
+
     routeGrid.log();
 }
 
@@ -224,14 +260,8 @@ function startGame(dailySeedPrefix)
     console.log("Done");
 
     return {
-        wordGrid: [
-            "I", "D", "E", "V", "L",
-            "O", "A", "T", "E", "O", 
-            "T", "I", "R", "S", "V", 
-            "U", "A", "E", "E", "E", 
-            "A", "L", "R", "Q", "U"
-        ],
-        intendedSolution: ["REQUEST", "REVOLVE", "RADIO", "RITUAL", "REAR"]
+        wordGrid: wordGrid.value,
+        intendedSolution: wordList
     };
       
 }
