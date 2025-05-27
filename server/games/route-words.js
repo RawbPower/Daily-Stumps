@@ -1,5 +1,5 @@
 const random = require('../utils/random');
-const words = require("../data/valid_words");
+const words = require("../data/common_words");
 const Grid = require("../utils/grid").Grid;
 
 let routeGrid = new Grid(5, 5);

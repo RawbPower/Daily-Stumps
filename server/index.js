@@ -2,6 +2,7 @@ const summingCircle = require("./games/summing-circle");
 const sumominoes = require("./games/sumominoes");
 const tonari = require("./games/tonari");
 const routeWords = require("./games/route-words");
+const sequence = require("./games/sequence");
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -131,6 +132,7 @@ DailyPuzzleData.SummingCircle = summingCircle.startGame(dailySeed);
 DailyPuzzleData.Sumominoes = sumominoes.startGame(dailySeed);
 DailyPuzzleData.Tonari = tonari.startGame(dailySeed);
 DailyPuzzleData.RouteWords = routeWords.startGame(dailySeed);
+DailyPuzzleData.Sequence = sequence.startGame(dailySeed);
 
 app.get("/api", (req, res) => {
     res.json({ puzzleData: DailyPuzzleData });

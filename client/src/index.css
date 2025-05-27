@@ -342,7 +342,7 @@ button.letter-current-route > p
 {
   display: grid;
   grid-gap: 10px;
-  grid-template: auto auto / repeat(7, 1fr);
+  grid-template: auto auto / repeat(10, 1fr);
   margin-bottom: 10px;
 }
 

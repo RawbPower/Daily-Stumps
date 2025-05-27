@@ -80,7 +80,7 @@ export default function Sequence(props)
         let currentLetterIndex = i;
         while (currentLetterIndex > 0)
         {
-            if (sortedWordArray[i] == sortedWordArray[i-1])
+            if (sortedWordArray[currentLetterIndex] == sortedWordArray[currentLetterIndex-1])
             {
                 repeatedLetterCount++;
                 currentLetterIndex--;
