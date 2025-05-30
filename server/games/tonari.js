@@ -53,10 +53,10 @@ function areDivisionValid(divisions)
 function getNeighbours(index)
 {
     let neighbours = new Array(4);
-    neighbours[0] = (index % grid.cols != 4) ? grid.get(index+1) : -1;                  // Right
+    neighbours[0] = (index % grid.cols != grid.cols-1) ? grid.get(index+1) : -1;                  // Right
     neighbours[1] = (index % grid.cols != 0) ? grid.get(index-1) : -1;                  // Left
     neighbours[2] = (index > grid.cols - 1) ? grid.get(index-grid.cols) : -1;               // Above
-    neighbours[3] = (index < grid.length() - grid.cols) ? grid.get(index+5) : -1;     // Bottom
+    neighbours[3] = (index < grid.length() - grid.cols) ? grid.get(index+grid.cols) : -1;     // Bottom
     return neighbours;
 }
 
