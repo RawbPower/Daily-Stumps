@@ -128,7 +128,8 @@ DailyPuzzleData.Tonari = {
   ]
 }
 
-const dailySeed = "07052025";
+//const dailySeed = "07052025";
+const dailySeed = "11012026";
 DailyPuzzleData.SummingCircle = summingCircle.startGame(dailySeed);
 DailyPuzzleData.Sumominoes = sumominoes.startGame(dailySeed);
 DailyPuzzleData.Tonari = tonari.startGame(dailySeed);

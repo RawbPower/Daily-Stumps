@@ -29,6 +29,7 @@ export default function RouteWords(props)
         setWords([]);
         setWordRoutes([]);
         setLetterCoords([]);
+        calculateLetterCoords()
     }
 
     const polylineForwardSpeed = 0.2;
@@ -41,23 +42,28 @@ export default function RouteWords(props)
         console.log("game won!");
     }
 
+    function calculateLetterCoords()
+    {
+        const rect = gridRef.current.getBoundingClientRect();
+        const cellWidth = rect.width / 5;
+        const cellLength = rect.height / 5;
+        for (let row = 0; row < 5; row++)
+        {
+            for (let col = 0; col < 5; col++)
+            {
+                 const letterCoord = {
+                    x: (col + 0.5) * cellWidth,
+                    y: (row + 0.5) * cellLength
+                }
+                setLetterCoords((prevCoords) => ([...prevCoords, letterCoord]))
+            }
+        }
+    }
+
     React.useEffect(() => {
         if (gridRef.current) {
             setLetterCoords([])
-            const rect = gridRef.current.getBoundingClientRect();
-            const cellWidth = rect.width / 5;
-            const cellLength = rect.height / 5;
-            for (let row = 0; row < 5; row++)
-            {
-                for (let col = 0; col < 5; col++)
-                {
-                    const letterCoord = {
-                        x: (col + 0.5) * cellWidth,
-                        y: (row + 0.5) * cellLength
-                    }
-                    setLetterCoords((prevCoords) => ([...prevCoords, letterCoord]))
-                }
-            }
+            calculateLetterCoords()
         }
     }, []);
 
@@ -339,6 +345,7 @@ export default function RouteWords(props)
                     {wordGridComponents}
                     <svg style={{zIndex: 2}} className="line" height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
                         {createAnimatedPolyline(currentWordRoute, "#2b2b27", 0, 1.0)}
+                        {/*createAnimatedPolyline(currentWordRoute, "#7FADDC", 0, 1.0)*/}
                     </svg>
                     <svg style={{zIndex: 1}} className="line" height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
                         {addedWordRoutesPolylines}

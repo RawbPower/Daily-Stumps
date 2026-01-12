@@ -25,11 +25,6 @@ export default function App() {
             { dailyPuzzleData &&
                 <div className="game-page">
                     <RouteWords puzzleData={dailyPuzzleData.RouteWords} />
-                    <SummingCircle puzzleData={dailyPuzzleData.SummingCircle} />
-                    <Sumominoes puzzleData={dailyPuzzleData.Sumominoes} />
-                    <Tonari puzzleData={dailyPuzzleData.Tonari} />
-                    <Sequence puzzleData={dailyPuzzleData.Sequence} />
-                    <Crossings puzzleData={dailyPuzzleData.Crossings} />
                 </div>
             }
             </main>
