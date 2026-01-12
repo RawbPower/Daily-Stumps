@@ -29,7 +29,7 @@ export default function Tonari(props)
 
     if (gameWon)
     {
-        console.log("game won!");
+        console.log("Game won!");
     }
 
     function toggleLine(index)
